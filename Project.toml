@@ -1,0 +1,13 @@
+name = "ResponseManneville"
+uuid = "23ad7a3a-076a-4a14-afd1-8e7b519e6996"
+authors = ["Isaia Nisoli <nisoli@im.ufrj.br> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
