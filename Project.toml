@@ -3,6 +3,16 @@ uuid = "23ad7a3a-076a-4a14-afd1-8e7b519e6996"
 authors = ["Isaia Nisoli <nisoli@im.ufrj.br> and contributors"]
 version = "0.1.0"
 
+[deps]
+DualNumbers = "fa6b7ba4-c1ee-5f82-b5fc-ecf0adba8f74"
+GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
+IntervalArithmetic = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+TaylorSeries = "6aa5eb33-94cf-58f4-a9d0-e4b2c4fc25ea"
+ValidatedNumerics = "d621b6e3-7715-5857-9c6f-c67000ef6083"
+
 [compat]
 julia = "1"
 
