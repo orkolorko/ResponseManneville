@@ -99,7 +99,7 @@ function Base.getindex(B::C2Basis, i::Int)
 		#println("val")
 		return x->ϕ((n-1)*x-i+1)
 	elseif n<i<=2*n
-        return x->ν((n-1)*x-i+n+1) #we have to subtract n to i
+        return x->ν((n-1)*x-i+n+1)/(n-1) #we have to subtract n to i
 	end
 	#return x->κ(x) 
 end
@@ -210,6 +210,42 @@ function Base.iterate(S::ProjectDualElement{T}, state = (S.j_min, :val) ) where 
     end 
 end
 
+using IntervalOptimisation
+function infnormoffunction(B::C2Basis, v)
+	n = length(B.p)	
+	maximum = -Inf
+	for i in 1:length(B.p)-1	
+		coeff= v[i]*[1, 0, 0, -10, 15, -6] #coeff for ϕ
+    	coeff+= (v[i+n]/(n-1))*[0, 1, 0, -6, 8, -3]  #coeff for ν
+    	# coefficients from the right endpoint
+    	coeff+= v[i+1]*[0, 0, 0, 10, -15, 6]
+		coeff+= (v[i+n+1]/(n-1))*[0, 0, 0, -4, +7, -3]
+		
+		dom = Interval(0, 1)
+		f(x) = abs(evalpoly(x, coeff))
+		maximum =  max(maximum, maximise(f, dom)[1])
+	end
+	return maximum
+end
+
+function infnormofderivative(B::C2Basis, v)
+	n = length(B.p)	
+	maximum = -Inf
+	for i in 1:length(B.p)-1	
+		coeff= (n-1)*v[i]*[0, 0, -30, 60, -30] #coeff for ϕ
+    	coeff+= v[i+n]*[1, 0, -18, 32, -15]  #coeff for ν
+    	# coefficients from the right endpoint
+    	coeff+= (n-1)*v[i+1]*[0, 0, 30, -60, 30]
+		coeff+= v[i+n+1]*[0, 0, -12, +28, -15]
+		
+		dom = Interval(0, 1)
+		f(x) = abs(evalpoly(x, coeff))
+		maximum =  max(maximum, maximise(f, dom)[1])
+	end
+	return maximum
+end
+
+C1Norm(B::C2Basis, v) = infnormoffunction(B,v)+infnormofderivative(B,v)
 
 
 end

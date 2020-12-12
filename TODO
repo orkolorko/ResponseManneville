@@ -1,3 +1,4 @@
 * Check in the preim whether p[i] is passed as an interval
 * Check where the precision of the Interval type is specified
-* Check the absolute values in the formula for (Lf)'    
+* Check the absolute values in the formula for (Lf)'  
+* Check value of the integral for \nu_1 and \nu_{N+1}     
