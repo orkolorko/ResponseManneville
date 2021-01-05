@@ -83,6 +83,7 @@ end
 
 Base.iterate(S::AverageZero{B}, state) where {B} = @error "Not Implemented"
 Base.length(S::AverageZero) = length(S.basis)-1
+#Base.zeros(B::Basis) = zeros(length(B))
 
 """
 	Return a constant Kh (typically scales as h ~ 1/n) such that `||P_h f-f||\\leq Kh ||f||_s`

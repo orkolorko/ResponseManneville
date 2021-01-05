@@ -5,9 +5,11 @@ C2 basis on the Torus [0,1]
 """
 
 using ..BasisDefinition, ..DynamicDefinition, ValidatedNumerics
+import Base: iterate, length
 import ..BasisDefinition: one_vector, integral_covector, is_integral_preserving
 import ...ResponseManneville: NormKind, Linf
-export C2Basis, dual_val, dual_der
+
+export C2Basis, dual_val, dual_der, C1, C2
 
 struct C1 <: NormKind end
 struct C2 <: NormKind end
@@ -37,7 +39,7 @@ end
 C2Basis(n::Integer) = C2Basis(EquispacedPartitionInterval{Float64}(n))
 
 """
-Return the size of the C2 basis
+Return the size of the C2 basisBase.length(S::AverageZero) = length(S.basis)-1
 """
 Base.length(b::C2Basis) = 2*length(b.p) 
 
@@ -162,7 +164,7 @@ BasisDefinition.is_refinement(Bf::C2Basis, Bc::C2Basis) = Bc.p ⊆ Bf.p
 
 function integral_covector(B::C2Basis)
     n = length(B.p)
-	return 1/(n-1)*[0.5; ones(n-2); 0.5; 0.1; zeros(n-2); -0.1]'
+	return 1/(n-1)*[@interval 0.5; ones(Interval{Float64}, n-2); @interval 0.5; @interval 1//10; zeros(n-2); @interval -1//10]'
 end
 
 function one_vector(B::C2Basis)
@@ -246,6 +248,30 @@ function infnormofderivative(B::C2Basis, v)
 end
 
 C1Norm(B::C2Basis, v) = infnormoffunction(B,v)+infnormofderivative(B,v)
+
+Base.length(S::AverageZero{T}) where T<:C2Basis = length(S.basis)-1
+
+function Base.iterate(S::AverageZero{T}, state = 1) where T<:C2Basis
+	n = length(S.basis)÷2
+	v = zeros(2*n)
+	
+	i = state
+	if i == 2*n
+		return nothing
+	elseif 1 <= i < n
+		v[i+1] = 1
+		v[1] = -2
+	elseif i == n
+		v[i+1] = 1
+		v[1] = -1/5
+	elseif n<i<2*n-1
+		v[i+1] = 1
+	elseif i==2*n-1
+		v[i+1] = 1
+		v[1] = 1/5
+	end
+	return v, state+1
+end
 
 
 end
