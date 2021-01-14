@@ -9,6 +9,9 @@ using SparseArrays: getcolptr
 using .DynamicDefinition
 
 using .DynamicDefinition: derivative
+using .PwDynamicDefinition: PwMap
+
+
 
 """
 'Absolute value' definition that returns mag(I) for an interval and abs(x) for a real
