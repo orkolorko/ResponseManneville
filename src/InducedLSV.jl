@@ -224,3 +224,47 @@ end
 
 end
 
+using TaylorSeries: Taylor1
+
+
+function bound_gamma_norm_gprime(α ,small_k, big_k, γ; T = Float64)
+	#domains = reverse(InducedLSVMapDefinition.GetDomains(α, big_k+1; T= T))
+	sum = 0.0
+	for i in small_k:big_k
+		right = InducedLSVMapDefinition.ShootingLSV(i-1, 0.5, α)[1]
+		@info right
+		#@info domains[i].lo, domains[i].hi
+		f(x) = InducedLSVMapDefinition.iterate_LSV(x, i, α)
+		fprime(x) = f(Taylor1([x, 1], 1))[1]
+		fsecond(x) = 2*f(Taylor1([x, 1], 2))[2]
+		tempered_distorsion(x)= abs((f(x)^γ)*1/fprime(x))
+		dom = Interval(0.5, right.hi)
+		tol = diam(dom)*2^(-10)
+		dist = maximise(tempered_distorsion, dom, tol= tol)
+		@info dist[1] 
+		sum+= dist[1]
+	end		
+	return sum
+end
+
+function bound_inf_norm_gsecond_over_gprime(α ,small_k, big_k, γ; T = Float64)
+	#domains = reverse(InducedLSVMapDefinition.GetDomains(α, big_k+1; T= T))
+	glob_dist = 0.0
+	right = InducedLSVMapDefinition.ShootingLSV(small_k-1, 0.5, α)[1]
+	for i in small_k:big_k
+		left = InducedLSVMapDefinition.ShootingLSV(i, 0.5, α)[1]
+		@info i, left, right
+		#@info domains[i].lo, domains[i].hi
+		f(x) = InducedLSVMapDefinition.iterate_LSV(x, i, α)
+		fprime(x) = f(Taylor1([x, 1], 1))[1]
+		fsecond(x) = 2*f(Taylor1([x, 1], 2))[2]
+		tempered_distorsion(x)= abs(fsecond(x)/(fprime(x))^2)
+		dom = Interval(left.lo, right.hi)
+		tol = diam(dom)*2^(-10)
+		dist = maximise(tempered_distorsion, dom, tol= tol)
+		glob_dist = max(dist[1].hi, glob_dist)
+		@info dist[1] 
+		right = left
+	end		
+	return glob_dist
+end
